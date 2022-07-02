@@ -24,11 +24,11 @@ const (
 )
 
 const (
-	pageDir = "page"
+	dataDir = "data"
 )
 
 var (
-	templateDir = "template"
+	templateDir = "tmpl"
 	templates   = template.Must(template.ParseFiles(
 		filepath.Join(templateDir, editTemplate),
 		filepath.Join(templateDir, viewTemplate),
@@ -44,11 +44,11 @@ type Page struct {
 
 func (p *Page) Save() error {
 	filename := p.Title + ".txt"
-	return os.WriteFile(filepath.Join(pageDir, filename), p.Body, 0600)
+	return os.WriteFile(filepath.Join(dataDir, filename), p.Body, 0600)
 }
 
 func loadIndex() ([]string, error) {
-	l, err := os.ReadDir(pageDir)
+	l, err := os.ReadDir(dataDir)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func loadIndex() ([]string, error) {
 
 func loadPage(title string) (*Page, error) {
 	filename := title + ".txt"
-	body, err := os.ReadFile(filepath.Join(pageDir, filename))
+	body, err := os.ReadFile(filepath.Join(dataDir, filename))
 	if err != nil {
 		return nil, err
 	}
