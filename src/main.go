@@ -57,21 +57,21 @@ func (p *Page) Html() template.HTML {
 	return template.HTML(html)
 }
 
-func loadIndex() ([]string, error) {
-	l, err := os.ReadDir(dataDir)
+func loadPageIndex() (*Page, error) {
+	s, err := os.ReadDir(dataDir)
 	if err != nil {
 		return nil, err
 	}
-	r := make([]string, 0)
-	for _, v := range l {
+	titles := make([]string, 0)
+	for _, v := range s {
 		if t, n := v.Type(), v.Name(); t.IsRegular() && strings.HasSuffix(n, ".txt") {
-			r = append(r, n[:len(n)-len(".txt")])
+			titles = append(titles, n[:len(n)-len(".txt")])
 		}
 	}
-	return r, nil
+	return &Page{Index: titles}, nil
 }
 
-func loadPage(title string) (*Page, error) {
+func loadPageWithTitle(title string) (*Page, error) {
 	filename := title + ".txt"
 	body, err := os.ReadFile(filepath.Join(dataDir, filename))
 	if err != nil {
@@ -99,7 +99,7 @@ func titleHandler(fn func(http.ResponseWriter, *http.Request, string)) http.Hand
 }
 
 func editHandler(w http.ResponseWriter, r *http.Request, title string) {
-	p, err := loadPage(title)
+	p, err := loadPageWithTitle(title)
 	if err != nil {
 		p = &Page{Title: title}
 	}
@@ -118,7 +118,7 @@ func saveHandler(w http.ResponseWriter, r *http.Request, title string) {
 }
 
 func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
-	p, err := loadPage(title)
+	p, err := loadPageWithTitle(title)
 	if err != nil {
 		http.Redirect(w, r, editPath+title, http.StatusFound)
 		return
@@ -127,12 +127,12 @@ func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
 }
 
 func listHandler(w http.ResponseWriter, r *http.Request) {
-	i, err := loadIndex()
+	p, err := loadPageIndex()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	renderTemplate(w, listTemplate, &Page{Index: i})
+	renderTemplate(w, listTemplate, p)
 }
 
 func main() {
