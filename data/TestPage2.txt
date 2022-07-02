@@ -1,1 +1,1 @@
-This is another sample page.
+This is another sample page. The first sample page is [TestPage].

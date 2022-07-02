@@ -36,6 +36,11 @@ var (
 	))
 )
 
+var (
+	titlePathExp = regexp.MustCompile("^/(edit|save|view)/([a-zA-Z0-9]+)$")
+	pageLinkExp  = regexp.MustCompile(`\[([a-zA-Z0-9]+)\]`)
+)
+
 type Page struct {
 	Title string
 	Body  []byte
@@ -45,6 +50,11 @@ type Page struct {
 func (p *Page) Save() error {
 	filename := p.Title + ".txt"
 	return os.WriteFile(filepath.Join(dataDir, filename), p.Body, 0600)
+}
+
+func (p *Page) Html() template.HTML {
+	html := []byte(pageLinkExp.ReplaceAllString(string(p.Body), `<a href="/view/$1">$1</a>`))
+	return template.HTML(html)
 }
 
 func loadIndex() ([]string, error) {
@@ -76,8 +86,6 @@ func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
-
-var titlePathExp = regexp.MustCompile("^/(edit|save|view)/([a-zA-Z0-9]+)$")
 
 func titleHandler(fn func(http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
