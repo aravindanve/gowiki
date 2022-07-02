@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+if [ -z `which gow` ]; then
+  echo "installing gow..."
+  go install github.com/mitranim/gow@latest
+  echo "done!"
+fi
+
+gow -e="go,mod,html" run ./server

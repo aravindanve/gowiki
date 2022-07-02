@@ -1,0 +1,9 @@
+<h1>Index</h1>
+
+<ul>
+  {{range .Index}}
+  <li><a href="/view/{{ . }}">{{ . }}</a></li>
+  {{else}}
+  <div><i>No pages</i></div>
+  {{end}}
+</ul>

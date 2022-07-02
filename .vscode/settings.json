@@ -1,0 +1,11 @@
+{
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "html.validate.styles": false,
+  "htmlhint.options": {
+    "spec-char-escape": false,
+    "doctype-first": false
+  },
+}
