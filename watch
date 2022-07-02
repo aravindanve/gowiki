@@ -5,4 +5,4 @@ if [ -z `which gow` ]; then
   echo "done!"
 fi
 
-gow -e="go,mod,html" run ./server
+gow -e="go,mod,html" run ./src
